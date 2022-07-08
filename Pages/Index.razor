@@ -1,0 +1,95 @@
+﻿@page "/"
+@using System.Diagnostics
+@using System.Threading.Tasks
+@using IncrementalCultivator.Data
+@using System.Numerics
+
+
+
+<h1>Kunstwerke</h1>
+<div class="container">
+
+    <div class="left-element">
+        <p role="status">Fertige Kunstwerke: @gameState.kunstwerke.ToString()</p>
+    </div>
+
+
+
+    <div class="right-element">
+        <button class="btn btn-primary" @onclick="gameState.kunstwerke.incrementManually">Kosten: Harte Arbeit</button>
+    </div>
+
+</div>
+
+<br />
+<br>
+
+
+@foreach (Iterable property in gameState.properties)
+{
+
+
+
+
+    @if (property.show)
+    {
+
+        <h1>@property.Name</h1>
+        <div class="container">
+
+            <div class="left-element">
+                <p role="status">@property.Name: @property.ToString()</p>
+            </div>
+
+            <div class="right-element">
+                <button class="btn btn-primary" @onclick="property.incrementManually">Kosten: @property.kostenString() @property.kostenTräger!.name</button>
+            </div>
+
+        </div>
+        <br />
+        <br>
+    }
+
+}
+
+
+
+
+
+@code {
+    SabinaGameService game = new SabinaGameService();
+
+    SabinaGameState? gameState;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        game.setup();
+        gameState = game.gameState!;
+
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync(async () =>
+            {
+                // Add your update logic here
+                game.tick();
+
+                // Update the UI
+                StateHasChanged();
+            });
+        }, null, 0, 30);
+    }
+
+ 
+
+    void ButtonClicked()
+    {
+        //
+    }
+
+
+
+
+}
